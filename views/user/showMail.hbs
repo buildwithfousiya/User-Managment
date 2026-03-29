@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="/styles/userHome.css">
+
+<nav class="navbar">
+  <div class="container">
+    <h1 class="site-title">Tech Talk with Favas</h1>
+    <button class="logout-btn">Logout</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-content">
+    <h2>Your Email Id</h2>
+    <p>{{emailId}}</p>
+  </div>
+</section>
+
+<script>
+    const logoutBtn = document.querySelector('.logout-btn');
+    logoutBtn.addEventListener('click', () => {
+        window.location.href = '/user/logout';
+    });
+</script>

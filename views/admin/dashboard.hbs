@@ -1,0 +1,142 @@
+<link rel="stylesheet" href="/styles/dashboard.css" />
+
+<!--Navbar-->
+<nav class="navbar">
+    <h2>Admin Dashboard</h2>
+    <button class="logout-btn" onclick="window.location.href='/admin/logout'">Logout</button>
+</nav>
+
+<!--Main Content-->
+<main class="main-container">
+    <h2>User Management</h2>
+    <div class="table-controls">
+        <button class="add-user-btn" onclick="openAddUserModal()">Add User</button>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by email" onkeyup="filterUsers()" />
+    </div>
+    <table class="user-table" id="userTable">
+        <thead>
+            <tr>
+                <th>Sl No</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each users}}
+            <tr>
+                <td>{{inc @index}}</td>
+                <td>{{this.email}}</td>
+                <td>
+                    <button class="edit-btn" onclick="openEditUserModal('{{this._id}}', '{{this.email}}')">Edit</button>
+                    <button class="delete-btn" onclick="deleteUser('{{this._id}}')">Delete</button>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</main>
+
+<!--Add User Modal-->
+<div id="addUserModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeAddUserModal()">&times;</span>
+        <h2>Add User</h2>
+        <form id="addUserForm" method="post" action="/admin/add-user" onsubmit="return formValidate();">
+            <label for="addEmail">Email:</label>
+            <input type="text" id="addEmail" name="email" />
+            <label for="addPassword">Password:</label>
+            <input type="password" id="addPassword" name="password" />
+            <button type="submit" class="modal-btn" >Add User</button>
+        </form>
+    </div>
+</div>
+
+<!--Edit User Modal-->
+<div id="editUserModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditUserModal()">&times;</span>
+        <h2>Edit User</h2>
+        <form id="editUserForm" method="post" action="/admin/edit-user">
+            <input type="hidden" id="editUserId" name="id" />
+            <label for="editEmail">Email:</label>
+            <input type="email" id="editEmail" name="email" required />
+            <label for="editPassword">New Password:</label>
+            <input type="password" id="editPassword" name="password" />
+            <button type="submit" class="modal-btn">Save changes</button>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    function openAddUserModal() {
+        document.getElementById('addUserModal').style.display = 'block';
+    } 
+    
+    function closeAddUserModal() {
+        document.getElementById('addUserModal').style.display = 'none';
+    } 
+    
+    function openEditUserModal(id, email) {
+        document.getElementById('editUserModal').style.display = 'block';
+        document.getElementById('editUserId').value = id;
+        document.getElementById('editEmail').value = email;
+    } 
+    
+    function closeEditUserModal() {
+        document.getElementById('editUserModal').style.display = 'none';
+    } 
+
+    function deleteUser(userId) {
+    swal({
+        title: "Are you sure?",
+        text: "Do you really want to delete this user?",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true
+    }).then((willDelete) => {
+        if (willDelete) {
+            window.location.href = `/admin/delete-user/${userId}`;
+        }
+    });
+}
+
+    
+    function filterUsers() {
+        let input = document.getElementById('searchInput').value.toLowerCase(); 
+        let rows = document.querySelectorAll('#userTable tbody tr'); 
+        rows.forEach(row => {
+            let email = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
+            if(email.includes(input)) { 
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    function formValidate() {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        let email = document.getElementById('addEmail').value.trim();
+        let password = document.getElementById('addPassword').value.trim();
+
+        email= email.trim().toLowerCase();
+        password = password.trim();
+
+        if (!email || !password) {
+            swal("All fields are required!");
+            return false;
+        } else if (!emailRegex.test(email)) {
+            swal("Please enter a valid email address!");
+            return false;
+        } else if (!passwordRegex.test(password)) {
+            swal("Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
+            return false;
+        }
+
+        return true;
+    }
+
+</script>

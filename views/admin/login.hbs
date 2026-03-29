@@ -1,0 +1,49 @@
+    <link rel="stylesheet" href="/styles/adminLogin.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+
+    <div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <form action="/admin/login" method="POST">
+        <h3>Admin Login</h3>
+        <input type="text" id="message" value="{{{message}}}" style="display:none;" />
+        <label for="email">Email</label>
+        <input type="text" placeholder="Enter email" name="email" id="email">
+
+        <label for="password">Password</label>
+        <input type="password" placeholder="Enter password" name="password" id="password">
+
+        <button type="submit">Log In</button>
+        {{!-- <div class="social">
+          <div class="go"><i class="fab fa-google"></i>  Google</div>
+          <div class="fb"><i class="fab fa-facebook"></i>  Facebook</div>
+        </div> --}}
+    </form>
+
+    <script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelector('form').addEventListener('submit', formValidate);
+    });
+
+    const message = document.getElementById('message').value;
+    if (message) {
+        swal(message);
+    }
+
+    function formValidate(e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        if (!email || !password) {
+            swal("All fields are required!");
+            return false;
+        }
+        e.target.submit();
+        return true;
+    }
+
+</script>
